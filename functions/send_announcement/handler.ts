@@ -27,9 +27,9 @@ export default SlackFunction(
     // create a new identifier for this announcements.
     const draft_id = crypto.randomUUID();
 
-    const sum_message = `${inputs.username} 휴가 공유합니다. :palm_tree:\n
-      - 휴가 종류: ${inputs.holiday_type}\n
-      - 휴가 기간: ${inputs.holiday_date}
+    const sum_message = `<@${inputs.username}> 휴가 공유합니다. :palm_tree:\n
+      ∙ 휴가 종류: ${inputs.holiday_type}
+      ∙ 휴가 기간: ${inputs.holiday_date}
       ${inputs.message ? `\n${inputs.message}` : ""}
     `;
 
