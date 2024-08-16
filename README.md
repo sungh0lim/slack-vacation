@@ -74,3 +74,9 @@ slack run
 ```shell
 slack deploy
 ```
+
+### Show activity logs
+
+```shell
+slack activity --tail
+```

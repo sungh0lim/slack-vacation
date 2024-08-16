@@ -12,8 +12,7 @@ const trigger: Trigger<
 > = {
   type: TriggerTypes.Shortcut,
   name: "휴가공유",
-  description:
-    "Create and send an announcement to one or more channels in your workspace.",
+  description: "당신의 휴가를 마음것 공유하세요.",
   workflow: `#/workflows/${CreateAnnouncementWorkflow.definition.callback_id}`,
   inputs: {
     created_by: {
