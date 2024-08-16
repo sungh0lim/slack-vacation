@@ -2,12 +2,11 @@ import { SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPIClient } from "deno-slack-sdk/types.ts";
 
 import { PrepareSendAnnouncementFunctionDefinition } from "./definition.ts";
-import { buildAnnouncementBlocks, buildSentBlocks } from "./blocks.ts";
+import { buildAnnouncementBlocks } from "./blocks.ts";
 
-import { AnnouncementType } from "../post_summary/types.ts";
-import { ChatPostMessageParams, DraftStatus } from "../create_draft/types.ts";
+import { AnnouncementType } from "../send_announcement/types.ts";
+import { ChatPostMessageParams } from "../create_draft/types.ts";
 
-import DraftDatastore from "../../datastores/drafts.ts";
 import AnnouncementsDatastore from "../../datastores/announcements.ts";
 
 /**
@@ -26,55 +25,24 @@ export default SlackFunction(
     // Incoming draft_id to link all announcements that are
     // part of the same draft. If a draft_id was not provided,
     // create a new identifier for this announcements.
-    const draft_id = inputs.draft_id || crypto.randomUUID();
+    const draft_id = crypto.randomUUID();
 
     const blocks = buildAnnouncementBlocks(inputs.message);
 
     for (const channel of inputs.channels) {
       const params: ChatPostMessageParams = {
+        username: "휴가공유 알림이",
         channel: channel,
         blocks: blocks,
-        text: `An announcement was posted`,
+        icon_emoji: ":palm_tree:",
+        text: inputs.message,
       };
-
-      if (inputs.icon) {
-        params.icon_emoji = inputs.icon;
-      }
-
-      if (inputs.username) {
-        params.username = inputs.username;
-      }
 
       const announcementRes = sendAndSaveAnnouncement(params, draft_id, client);
       chatPostMessagePromises.push(announcementRes);
     }
 
     const announcements = await Promise.all(chatPostMessagePromises);
-
-    // Update draft if one was created
-    if (inputs.draft_id) {
-      const { item } = await client.apps.datastore.update<
-        typeof DraftDatastore.definition
-      >({
-        datastore: DraftDatastore.name,
-        item: {
-          id: inputs.draft_id,
-          status: DraftStatus.Sent,
-        },
-      });
-
-      const blocks = buildSentBlocks(
-        item.created_by,
-        inputs.message,
-        inputs.channels,
-      );
-
-      await client.chat.update({
-        channel: item.channel,
-        ts: item.message_ts,
-        blocks: blocks,
-      });
-    }
 
     return { outputs: { announcements: announcements } };
   },

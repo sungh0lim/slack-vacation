@@ -1,6 +1,4 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { CreateDraftFunctionDefinition } from "../functions/create_draft/definition.ts";
-import { PostSummaryFunctionDefinition } from "../functions/post_summary/definition.ts";
 import { PrepareSendAnnouncementFunctionDefinition } from "../functions/send_announcement/definition.ts";
 
 /**
@@ -23,6 +21,9 @@ const CreateAnnouncementWorkflow = DefineWorkflow({
       interactivity: {
         type: Schema.slack.types.interactivity,
       },
+      channel: {
+        type: Schema.slack.types.channel_id,
+      },
     },
     required: ["created_by", "interactivity"],
   },
@@ -37,7 +38,7 @@ const formStep = CreateAnnouncementWorkflow
     description:
       "시프티, 기안에는 반영되지 않아요. 앞으로 기능을 지원할 예정입니다.",
     interactivity: CreateAnnouncementWorkflow.inputs.interactivity,
-    submit_label: "Preview",
+    submit_label: "공유하기",
     fields: {
       elements: [
         {
@@ -56,63 +57,19 @@ const formStep = CreateAnnouncementWorkflow
             "Compose your message using plain text, mrkdwn, or blocks",
           long: true,
         },
-        {
-          name: "channel",
-          title: "Draft channel",
-          type: Schema.slack.types.channel_id,
-          description:
-            "The channel where you and your team can preview & edit the announcement before sending",
-        },
-        {
-          name: "icon",
-          title: "Custom emoji icon",
-          type: Schema.types.string,
-          description:
-            "Emoji to override the default app icon. Must use the format &colon;robot_face&colon; to be applied correctly.",
-        },
-        {
-          name: "username",
-          title: "Custom username",
-          type: Schema.types.string,
-          description: "Name to override the default app name",
-        },
       ],
-      required: ["channels", "message", "channel"],
+      required: ["channels", "message"],
     },
   });
 
-// Step 2: Create a draft announcement
-// This step uses a custom function published by this app
-// https://api.slack.com/automation/functions/custom
-const draftStep = CreateAnnouncementWorkflow.addStep(
-  CreateDraftFunctionDefinition,
-  {
-    created_by: CreateAnnouncementWorkflow.inputs.created_by,
-    message: formStep.outputs.fields.message,
-    channels: formStep.outputs.fields.channels,
-    channel: formStep.outputs.fields.channel,
-    icon: formStep.outputs.fields.icon,
-    username: formStep.outputs.fields.username,
-  },
-);
-
-// Step 3: Send announcement(s)
-const sendStep = CreateAnnouncementWorkflow.addStep(
+// Step 2: Send announcement(s)
+CreateAnnouncementWorkflow.addStep(
   PrepareSendAnnouncementFunctionDefinition,
   {
-    message: draftStep.outputs.message,
+    message: formStep.outputs.fields.message,
     channels: formStep.outputs.fields.channels,
-    icon: formStep.outputs.fields.icon,
-    username: formStep.outputs.fields.username,
-    draft_id: draftStep.outputs.draft_id,
+    username: CreateAnnouncementWorkflow.inputs.created_by,
   },
 );
-
-// Step 4: Post message summary of announcement
-CreateAnnouncementWorkflow.addStep(PostSummaryFunctionDefinition, {
-  announcements: sendStep.outputs.announcements,
-  channel: formStep.outputs.fields.channel,
-  message_ts: draftStep.outputs.message_ts,
-});
 
 export default CreateAnnouncementWorkflow;
