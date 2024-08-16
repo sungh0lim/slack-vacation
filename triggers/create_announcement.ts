@@ -11,7 +11,7 @@ const trigger: Trigger<
   typeof CreateAnnouncementWorkflow.definition
 > = {
   type: TriggerTypes.Shortcut,
-  name: "Create an announcement",
+  name: "휴가공유",
   description:
     "Create and send an announcement to one or more channels in your workspace.",
   workflow: `#/workflows/${CreateAnnouncementWorkflow.definition.callback_id}`,
