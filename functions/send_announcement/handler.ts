@@ -27,7 +27,13 @@ export default SlackFunction(
     // create a new identifier for this announcements.
     const draft_id = crypto.randomUUID();
 
-    const blocks = buildAnnouncementBlocks(inputs.message);
+    const sum_message = `${inputs.username} 휴가 공유합니다. :palm_tree:\n
+      - 휴가 종류: ${inputs.holiday_type}\n
+      - 휴가 기간: ${inputs.holiday_date}
+      ${inputs.message ? `\n${inputs.message}` : ""}
+    `;
+
+    const blocks = buildAnnouncementBlocks(sum_message);
 
     for (const channel of inputs.channels) {
       const params: ChatPostMessageParams = {
@@ -35,7 +41,7 @@ export default SlackFunction(
         channel: channel,
         blocks: blocks,
         icon_emoji: ":palm_tree:",
-        text: inputs.message,
+        text: sum_message,
       };
 
       const announcementRes = sendAndSaveAnnouncement(params, draft_id, client);

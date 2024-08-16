@@ -16,6 +16,15 @@ export const PrepareSendAnnouncementFunctionDefinition = DefineFunction({
   source_file: "functions/send_announcement/handler.ts",
   input_parameters: {
     properties: {
+      holiday_date: {
+        type: Schema.types.string,
+        description:
+          "The date of the announcement (ex. 2024.11.17 ~ 2024.11.20)",
+      },
+      holiday_type: {
+        type: Schema.types.string,
+        description: "The type of holiday",
+      },
       message: {
         type: Schema.types.string,
         description: "The content of the announcement",
@@ -33,7 +42,6 @@ export const PrepareSendAnnouncementFunctionDefinition = DefineFunction({
       },
     },
     required: [
-      "message",
       "channels",
     ],
   },

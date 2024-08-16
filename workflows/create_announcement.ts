@@ -42,23 +42,59 @@ const formStep = CreateAnnouncementWorkflow
     fields: {
       elements: [
         {
+          name: "holiday_date",
+          title: "휴가 일자를 적어주세요.",
+          type: Schema.types.string,
+          description: "ex. 2024.11.17 ~ 2024.11.20.",
+        },
+        {
+          name: "holiday_type",
+          title: "휴가 종류를 선택해주세요.",
+          type: Schema.types.string,
+          enum: [
+            "연차",
+            "연차_오전반차",
+            "연차_오후반차",
+            "대체휴가",
+            "대체_오전반차",
+            "대체_오후반차",
+            "휴일근로 대체",
+            "휴일근로 대체_오전반차",
+            "휴일근로 대체_오후반차",
+            "무급휴가",
+            "무급_오전반차",
+            "무급_오후반차",
+            "보상휴가",
+            "보상_오전반차",
+            "보상_오후반차",
+            "특별휴가",
+            "특별_오전반차",
+            "특별_오후반차",
+            "안식휴가",
+            "공가",
+            "공가_오전반차",
+            "공가_오후반차",
+            "병가",
+            "경조휴가",
+            "출산휴가",
+          ],
+        },
+        {
+          name: "message",
+          title: "추가로 공유할 내용이 있다면 적어주세요.",
+          type: Schema.types.string,
+          long: true,
+        },
+        {
           name: "channels",
-          title: "채널 선택",
+          title: "공유할 채널을 선택해주세요. (복수선택 가능)",
           type: Schema.types.array,
           items: {
             type: Schema.slack.types.channel_id,
           },
         },
-        {
-          name: "message",
-          title: "Message",
-          type: Schema.types.string,
-          description:
-            "Compose your message using plain text, mrkdwn, or blocks",
-          long: true,
-        },
       ],
-      required: ["channels", "message"],
+      required: ["holiday_date", "holiday_type", "channels"],
     },
   });
 
@@ -66,6 +102,8 @@ const formStep = CreateAnnouncementWorkflow
 CreateAnnouncementWorkflow.addStep(
   PrepareSendAnnouncementFunctionDefinition,
   {
+    holiday_date: formStep.outputs.fields.holiday_date,
+    holiday_type: formStep.outputs.fields.holiday_type,
     message: formStep.outputs.fields.message,
     channels: formStep.outputs.fields.channels,
     username: CreateAnnouncementWorkflow.inputs.created_by,
