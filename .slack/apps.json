@@ -1,1 +1,10 @@
-{}
+{
+  "apps": {
+    "T0244AU37S5": {
+      "app_id": "A07HB63GSQ4",
+      "team_domain": "yogiyo",
+      "team_id": "T0244AU37S5"
+    }
+  },
+  "default": "yogiyo"
+}

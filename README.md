@@ -68,3 +68,9 @@ Authorization Level: Workspace
 ```shell
 slack run
 ```
+
+## Deploy
+
+```shell
+slack deploy
+```
