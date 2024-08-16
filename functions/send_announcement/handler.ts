@@ -5,7 +5,7 @@ import { PrepareSendAnnouncementFunctionDefinition } from "./definition.ts";
 import { buildAnnouncementBlocks } from "./blocks.ts";
 
 import { AnnouncementType } from "../send_announcement/types.ts";
-import { ChatPostMessageParams } from "../create_draft/types.ts";
+import { ChatPostMessageParams } from "../send_announcement/types.ts";
 
 import AnnouncementsDatastore from "../../datastores/announcements.ts";
 

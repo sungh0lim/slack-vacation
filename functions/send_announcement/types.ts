@@ -1,4 +1,5 @@
 import { DefineType, Schema } from "deno-slack-sdk/mod.ts";
+import { Block, KnownBlock } from "https://cdn.skypack.dev/@slack/types?dts";
 
 /**
  * This is a Slack Custom type for an Announcement
@@ -35,3 +36,21 @@ export type AnnouncementType = {
   permalink?: string;
   error?: string;
 };
+
+/**
+ * Helpful types and structures
+ */
+
+export type ChatPostMessageParams = {
+  channel: string;
+  thread_ts?: string;
+  blocks: (KnownBlock | Block)[];
+  text?: string;
+  icon_emoji?: string;
+  username?: string;
+};
+
+export enum DraftStatus {
+  Draft = "draft",
+  Sent = "sent",
+}
