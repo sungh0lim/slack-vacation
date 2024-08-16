@@ -13,9 +13,8 @@ import { PrepareSendAnnouncementFunctionDefinition } from "../functions/send_ann
  */
 const CreateAnnouncementWorkflow = DefineWorkflow({
   callback_id: "create_announcement",
-  title: "Create an announcement",
-  description:
-    "Create and send an announcement to one or more channels in your workspace.",
+  title: "휴가공유v2",
+  description: "당신의 휴가를 공유하세요.",
   input_parameters: {
     properties: {
       created_by: {
@@ -34,45 +33,51 @@ const CreateAnnouncementWorkflow = DefineWorkflow({
 // https://api.slack.com/automation/functions#built-in-functions
 const formStep = CreateAnnouncementWorkflow
   .addStep(Schema.slack.functions.OpenForm, {
-    title: "Create an announcement",
+    title: "휴가공유 입력 폼",
     description:
-      "Create a draft announcement. You will have the opportunity to preview & edit it in channel before sending.\n\n_Want to create a richer announcement? Use <https://app.slack.com/block-kit-builder|Block Kit Builder> and paste the full payload into the message input below._",
+      "시프티, 기안에는 반영되지 않아요. 앞으로 기능을 지원할 예정입니다.",
     interactivity: CreateAnnouncementWorkflow.inputs.interactivity,
     submit_label: "Preview",
     fields: {
-      elements: [{
-        name: "message",
-        title: "Message",
-        type: Schema.types.string,
-        description: "Compose your message using plain text, mrkdwn, or blocks",
-        long: true,
-      }, {
-        name: "channels",
-        title: "Destination channel(s)",
-        type: Schema.types.array,
-        items: {
-          type: Schema.slack.types.channel_id,
+      elements: [
+        {
+          name: "channels",
+          title: "채널 선택",
+          type: Schema.types.array,
+          items: {
+            type: Schema.slack.types.channel_id,
+          },
         },
-        description: "The channels where your announcement will be posted",
-      }, {
-        name: "channel",
-        title: "Draft channel",
-        type: Schema.slack.types.channel_id,
-        description:
-          "The channel where you and your team can preview & edit the announcement before sending",
-      }, {
-        name: "icon",
-        title: "Custom emoji icon",
-        type: Schema.types.string,
-        description:
-          "Emoji to override the default app icon. Must use the format &colon;robot_face&colon; to be applied correctly.",
-      }, {
-        name: "username",
-        title: "Custom username",
-        type: Schema.types.string,
-        description: "Name to override the default app name",
-      }],
-      required: ["message", "channels", "channel"],
+        {
+          name: "message",
+          title: "Message",
+          type: Schema.types.string,
+          description:
+            "Compose your message using plain text, mrkdwn, or blocks",
+          long: true,
+        },
+        {
+          name: "channel",
+          title: "Draft channel",
+          type: Schema.slack.types.channel_id,
+          description:
+            "The channel where you and your team can preview & edit the announcement before sending",
+        },
+        {
+          name: "icon",
+          title: "Custom emoji icon",
+          type: Schema.types.string,
+          description:
+            "Emoji to override the default app icon. Must use the format &colon;robot_face&colon; to be applied correctly.",
+        },
+        {
+          name: "username",
+          title: "Custom username",
+          type: Schema.types.string,
+          description: "Name to override the default app name",
+        },
+      ],
+      required: ["channels", "message", "channel"],
     },
   });
 
